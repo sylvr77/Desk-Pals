@@ -2,7 +2,12 @@ void setup() {
   // pins D0 - D13 can be used as input (read voltage) or output (send voltage)
   pinMode(13, OUTPUT);
 
+  
+  digitalWrite(13, HIGH);
 
+
+  pinMode(8, OUTPUT);
+  pinMode(9, OUTPUT);
   // pinmode(2, INPUT);
 
 
@@ -21,10 +26,30 @@ void setup() {
 }
 
 void loop() {
-  digitalWrite(13, HIGH);
-  delay(1000);
+  digitalWrite(8, HIGH);
+  digitalWrite(9, LOW);
+
+  // 5 sec delay...
+  delay(5000);
+
   digitalWrite(13, LOW);
-  delay(1000);
+  delay(2000);
+
+
+  digitalWrite(13, HIGH);
+
+  digitalWrite(8, LOW);
+  digitalWrite(9, HIGH);
+
+  delay(5000);
+
+  digitalWrite(13, LOW);
+  delay(2000);
+
+  digitalWrite(13, HIGH);
+
+  // digitalWrite(13, LOW);
+  // delay(1000);
 
   // int val = digitalRead(2);
 }
