@@ -1,9 +1,29 @@
 // global vars...
 bool testing = true;
 
+void stop();
 
 // initialisation code...
 void setup() {
+  // initialising arduino pins...
+  // ENA...
+  pinMode(13, OUTPUT);
+  // ENB...
+  pinMode(12, OUTPUT);
+
+  // K1 / K2...
+  // IN2...
+  pinMode(8, OUTPUT);
+  // IN1...
+  pinMode(9, OUTPUT);
+  
+  // K3 / K4...
+  // IN3...
+  pinMode(2, OUTPUT);
+  // IN4...
+  pinMode(3, OUTPUT);
+
+  // initialising serial...
   Serial.begin(9600);
 
   // "clear" serial...
@@ -11,14 +31,65 @@ void setup() {
     Serial.println();
   }
 
-  Serial.println(F("Accepting new keyboard command... {\"f\": forward, \"b\": backward, \"r\": clockwise rotation, \"l\": counterclockwise rotation}"));
+  Serial.println(F("Accepting new keyboard command... {\"f\": forward, \"b\": backward, \"r\": clockwise rotation, \"l\": counterclockwise rotation}, \"s\": stop}"));
+  stop();
 }
 
+void stop(){
+  // not ENA ==> stop...
+  digitalWrite(13, LOW);
+  digitalWrite(12, LOW);
+  delay(500);
 
-// TO DO: pin config for each direction...
-void forward(){return;}
-void backward(){return;}
-void clkwise_rot(){return;}
+  return;
+}
+
+void forward(){
+  // (ENA 1 and IN1 and not IN2) ==> K1, K2 rotate forward...
+  digitalWrite(13, HIGH);
+  digitalWrite(12, HIGH);
+  
+  // wheel1...
+  digitalWrite(8, HIGH);
+  digitalWrite(9, LOW);
+
+  // wheel2...
+  if (!testing){
+    digitalWrite(2, HIGH);
+    digitalWrite(3, LOW);
+  }
+  return;
+}
+
+void backward(){
+  // (ENA 1 and not IN1 and IN2) ==> K1, K2 rotate backward...
+  digitalWrite(13, HIGH);
+  digitalWrite(12, HIGH);
+
+
+  // wheel1...
+  digitalWrite(8, LOW);
+  digitalWrite(9, HIGH);
+
+  // wheel2...
+  if (!testing){
+    digitalWrite(2, LOW);
+    digitalWrite(3, HIGH);
+  }
+
+  return;
+}
+
+// TO DO: get K3, K4 on here... pin config for each direction...
+void clkwise_rot(){
+  digitalWrite(13, HIGH);
+
+  digitalWrite(8, LOW);
+  digitalWrite(9, HIGH);
+
+
+  return;
+}
 void ctrclkwise_rot(){return;}
 
 
@@ -36,14 +107,21 @@ void loop() {
     Serial.println(cmd);
 
     if (cmd == 'f'){
-       if (!testing) forward();
+      if (testing) {
+        stop();
+        forward();
+      }
+
       else Serial.println(F("Moving forward..."));
     }
 
     else if (cmd == 'b'){
-      if (!testing) backward();
-      else Serial.println(F("Moving backward..."));
+      if (testing) {
+        stop();
+        backward();
+      }
 
+      else Serial.println(F("Moving backward..."));
     }
 
     else if (cmd == 'r'){
@@ -56,6 +134,9 @@ void loop() {
       else Serial.println(F("Spinning counterclockwise..."));
     }
 
+    else if (cmd == 's'){
+      stop();
+    }
 
     else Serial.println(F("Invalid input... please type one of the following : {\"f\": forward, \"b\": backward, \"r\": clockwise rotation, \"l\": counterclockwise rotation}"));
   }
