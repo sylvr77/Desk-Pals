@@ -50,14 +50,13 @@ void forward(){
   digitalWrite(12, HIGH);
   
   // wheel1...
-  digitalWrite(8, HIGH);
-  digitalWrite(9, LOW);
+  digitalWrite(8, LOW);
+  digitalWrite(9, HIGH);
 
   // wheel2...
-  if (!testing){
-    digitalWrite(2, HIGH);
-    digitalWrite(3, LOW);
-  }
+  digitalWrite(2, HIGH);
+  digitalWrite(3, LOW);
+
   return;
 }
 
@@ -68,29 +67,47 @@ void backward(){
 
 
   // wheel1...
-  digitalWrite(8, LOW);
-  digitalWrite(9, HIGH);
+  digitalWrite(8, HIGH);
+  digitalWrite(9, LOW);
 
   // wheel2...
-  if (testing){
-    digitalWrite(2, LOW);
-    digitalWrite(3, HIGH);
-  }
+  digitalWrite(2, LOW);
+  digitalWrite(3, HIGH);
 
   return;
 }
 
 // TO DO: get K3, K4 on here... pin config for each direction...
 void clkwise_rot(){
+  // ENA, ENB HIGH
   digitalWrite(13, HIGH);
+  digitalWrite(12, HIGH);
 
-  digitalWrite(8, LOW);
-  digitalWrite(9, HIGH);
+  // wheel1... backward
+  digitalWrite(8, HIGH);
+  digitalWrite(9, LOW);
 
+  // wheel2... forward
+  digitalWrite(2, HIGH);
+  digitalWrite(3, LOW);
 
   return;
 }
-void ctrclkwise_rot(){return;}
+void ctrclkwise_rot(){
+  // ENA, ENB HIGH
+  digitalWrite(13, HIGH);
+  digitalWrite(12, HIGH);
+
+  // wheel1... forward
+  digitalWrite(8, LOW);
+  digitalWrite(9, HIGH);
+  
+  // wheel2... backward
+  digitalWrite(2, LOW);
+  digitalWrite(3, HIGH);
+
+  return;
+}
 
 
 // continuously reads in user input and executes respective direction of wheels...
@@ -125,12 +142,20 @@ void loop() {
     }
 
     else if (cmd == 'r'){
-      if (!testing) clkwise_rot();
+      if (testing) {
+        stop();
+        clkwise_rot();
+      }
+
       else Serial.println(F("Spinning clockwise..."));
     }
 
     else if (cmd == 'l'){
-      if (!testing) ctrclkwise_rot();
+      if (testing) {
+        stop();
+        ctrclkwise_rot();
+      }
+
       else Serial.println(F("Spinning counterclockwise..."));
     }
 
