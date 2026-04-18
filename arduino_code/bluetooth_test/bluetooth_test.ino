@@ -1,9 +1,12 @@
+#include <SoftwareSerial.h>
+// probably going to use these pins...
+//  arduino tx, rx resp needs to connect to bluetooth rx, tx resp 
+//  hence, blue to 5, white to 6 
+SoftwareSerial BT(5,6); 
+
 // global vars...
-bool testing = true;
+bool testing = false;
 
-void stop();
-
-// initialisation code...
 void setup() {
   // initialising arduino pins...
   // ENA... (orange1)
@@ -23,8 +26,12 @@ void setup() {
   // IN4... (green)
   pinMode(3, OUTPUT);
 
-  // initialising serial...
+
+
+  // initialising bluetooth... 
+  //   effectively just another serial port...
   Serial.begin(9600);
+  BT.begin(9600);
 
   // "clear" serial...
   for (int i = 0; i < 30; i++) {
@@ -32,8 +39,10 @@ void setup() {
   }
 
   Serial.println(F("Accepting new keyboard command... {\"f\": forward, \"b\": backward, \"r\": clockwise rotation, \"l\": counterclockwise rotation}, \"s\": stop}"));
+
   stop();
 }
+
 
 void stop(){
   // not ENA ==> stop...
@@ -110,18 +119,22 @@ void ctrclkwise_rot(){
 }
 
 
-// continuously reads in user input and executes respective direction of wheels...
 void loop() {
-  if (Serial.available() > 0) {
-    char cmd = Serial.read();
+  if (BT.available() > 0) {
+    char cmd = BT.read();
 
     // throw away "trivial" chars...
     if (cmd == '\n' || cmd == '\r') {
       return;
     }
 
-    Serial.print(F("Received: "));
+    Serial.print(F("Rcvd: "));
     Serial.println(cmd);
+
+    BT.print(F("Received: "));
+    BT.println(cmd);
+
+    
 
     if (cmd == 'f'){
       if (testing) {
@@ -129,7 +142,7 @@ void loop() {
         forward();
       }
 
-      else Serial.println(F("Moving forward..."));
+      else BT.println(F("Moving forward..."));
     }
 
     else if (cmd == 'b'){
@@ -138,7 +151,7 @@ void loop() {
         backward();
       }
 
-      else Serial.println(F("Moving backward..."));
+      else BT.println(F("Moving backward..."));
     }
 
     else if (cmd == 'r'){
@@ -147,7 +160,7 @@ void loop() {
         clkwise_rot();
       }
 
-      else Serial.println(F("Spinning clockwise..."));
+      else BT.println(F("Spinning clockwise..."));
     }
 
     else if (cmd == 'l'){
@@ -156,14 +169,16 @@ void loop() {
         ctrclkwise_rot();
       }
 
-      else Serial.println(F("Spinning counterclockwise..."));
+      else BT.println(F("Spinning counterclockwise..."));
     }
 
     else if (cmd == 's'){
       stop();
     }
 
-    else Serial.println(F("Invalid input... please type one of the following : {\"f\": forward, \"b\": backward, \"r\": clockwise rotation, \"l\": counterclockwise rotation}"));
+    else BT.println(F("Invalid input... please type one of the following : {\"f\": forward, \"b\": backward, \"r\": clockwise rotation, \"l\": counterclockwise rotation}"));
 
   }
 }
+
+
