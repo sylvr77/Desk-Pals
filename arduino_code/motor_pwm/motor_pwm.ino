@@ -16,7 +16,7 @@ const int IN2 = 8;
 const int IN3 = 2;
 const int IN4 = 3;
 
-int motorSpeed = 100;
+int motorSpeed = 160;
 
 void setup() {
   pinMode(ENA, OUTPUT);
@@ -85,7 +85,7 @@ void clkwise_rot(){
   digitalWrite(IN3, HIGH);
   digitalWrite(IN4, LOW);
 
-  analogWrite(ENA, motorSpeed);
+  analogWrite(ENA, motorSpeed + 2);
   analogWrite(ENB, motorSpeed);
 
   return;
@@ -100,7 +100,7 @@ void ctrclkwise_rot(){
   digitalWrite(IN4, HIGH);
 
   analogWrite(ENA, motorSpeed);
-  analogWrite(ENB, motorSpeed);
+  analogWrite(ENB, motorSpeed + 2);
 
   return;
 }
